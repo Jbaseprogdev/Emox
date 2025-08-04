@@ -13,7 +13,7 @@ import {
   Users
 } from 'lucide-react'
 import { useAuthStore } from '@/store/auth-store'
-import { getEmotionHistory, getJournalEntries } from '@/lib/supabase'
+import { getEmotionHistory, getJournalEntries } from '@/lib/firebase'
 import { EmotionData, DashboardStats } from '@/types'
 import { format, subDays } from 'date-fns'
 

@@ -22,10 +22,10 @@ A smart emotional wellness app that empowers users to understand, track, and reg
 ## 🚀 Quick Start
 
 ### Prerequisites
-- Node.js 18+ 
+- Node.js 18+
 - npm or yarn
-- Supabase account
-- OpenAI API key
+- Firebase account (optional - demo mode available)
+- OpenAI API key (optional - for AI features)
 
 ### 1. Clone and Install
 ```bash
@@ -42,179 +42,34 @@ cp env.example .env.local
 
 Edit `.env.local` with your actual values:
 ```env
-NEXT_PUBLIC_SUPABASE_URL=your_supabase_project_url
-NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+# Firebase Configuration (optional - demo mode works without these)
+NEXT_PUBLIC_FIREBASE_API_KEY=your_firebase_api_key
+NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=your_project.firebaseapp.com
+NEXT_PUBLIC_FIREBASE_PROJECT_ID=your_project_id
+NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=your_project.appspot.com
+NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=123456789
+NEXT_PUBLIC_FIREBASE_APP_ID=your_app_id
+
+# OpenAI Configuration (optional - for AI features)
 OPENAI_API_KEY=your_openai_api_key
 ```
 
-### 3. Supabase Setup
+### 3. Firebase Setup (Optional)
 
-#### Create a new Supabase project:
-1. Go to [supabase.com](https://supabase.com)
-2. Create a new project
-3. Get your project URL and anon key from Settings > API
+#### Demo Mode (Recommended for testing):
+The app works immediately with demo data:
+- Use any email ending with `@demo.com` and password `demo123`
+- No Firebase setup required
+- Sample data included for testing
 
-#### Set up the database schema:
-Run the following SQL in your Supabase SQL editor:
+#### Full Firebase Setup:
+For production use, follow the [Firebase Setup Guide](./FIREBASE_SETUP.md):
+1. Create a Firebase project
+2. Enable Authentication
+3. Set up Firestore Database
+4. Configure security rules
 
-```sql
--- Enable necessary extensions
-CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
-
--- Users table (extends Supabase auth.users)
-CREATE TABLE public.users (
-    id UUID REFERENCES auth.users(id) ON DELETE CASCADE PRIMARY KEY,
-    email TEXT NOT NULL,
-    name TEXT NOT NULL,
-    avatar TEXT,
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
-);
-
--- Journal entries
-CREATE TABLE public.journal_entries (
-    id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
-    user_id UUID REFERENCES public.users(id) ON DELETE CASCADE NOT NULL,
-    content TEXT NOT NULL,
-    summary TEXT,
-    mood_tag TEXT NOT NULL,
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
-);
-
--- Emotion logs
-CREATE TABLE public.emotions_log (
-    id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
-    user_id UUID REFERENCES public.users(id) ON DELETE CASCADE NOT NULL,
-    emotion_type TEXT NOT NULL,
-    score INTEGER NOT NULL CHECK (score >= 1 AND score <= 10),
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
-);
-
--- Vibe rooms
-CREATE TABLE public.vibe_rooms (
-    id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
-    creator_id UUID REFERENCES public.users(id) ON DELETE CASCADE NOT NULL,
-    emotion_tag TEXT NOT NULL,
-    is_private BOOLEAN DEFAULT FALSE,
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
-);
-
--- Vibe room participants
-CREATE TABLE public.vibe_room_participants (
-    id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
-    room_id UUID REFERENCES public.vibe_rooms(id) ON DELETE CASCADE NOT NULL,
-    user_id UUID REFERENCES public.users(id) ON DELETE CASCADE NOT NULL,
-    joined_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-    UNIQUE(room_id, user_id)
-);
-
--- Chat messages
-CREATE TABLE public.chat_messages (
-    id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
-    room_id UUID REFERENCES public.vibe_rooms(id) ON DELETE CASCADE NOT NULL,
-    user_id UUID REFERENCES public.users(id) ON DELETE CASCADE NOT NULL,
-    message TEXT NOT NULL,
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
-);
-
--- Threshold warnings
-CREATE TABLE public.threshold_warnings (
-    id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
-    user_id UUID REFERENCES public.users(id) ON DELETE CASCADE NOT NULL,
-    emotion_type TEXT NOT NULL,
-    score INTEGER NOT NULL,
-    triggered_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-    resolved_at TIMESTAMP WITH TIME ZONE
-);
-
--- Row Level Security (RLS) policies
-ALTER TABLE public.users ENABLE ROW LEVEL SECURITY;
-ALTER TABLE public.journal_entries ENABLE ROW LEVEL SECURITY;
-ALTER TABLE public.emotions_log ENABLE ROW LEVEL SECURITY;
-ALTER TABLE public.vibe_rooms ENABLE ROW LEVEL SECURITY;
-ALTER TABLE public.vibe_room_participants ENABLE ROW LEVEL SECURITY;
-ALTER TABLE public.chat_messages ENABLE ROW LEVEL SECURITY;
-ALTER TABLE public.threshold_warnings ENABLE ROW LEVEL SECURITY;
-
--- Users policies
-CREATE POLICY "Users can view own profile" ON public.users
-    FOR SELECT USING (auth.uid() = id);
-
-CREATE POLICY "Users can update own profile" ON public.users
-    FOR UPDATE USING (auth.uid() = id);
-
-CREATE POLICY "Users can insert own profile" ON public.users
-    FOR INSERT WITH CHECK (auth.uid() = id);
-
--- Journal entries policies
-CREATE POLICY "Users can view own journal entries" ON public.journal_entries
-    FOR SELECT USING (auth.uid() = user_id);
-
-CREATE POLICY "Users can insert own journal entries" ON public.journal_entries
-    FOR INSERT WITH CHECK (auth.uid() = user_id);
-
-CREATE POLICY "Users can update own journal entries" ON public.journal_entries
-    FOR UPDATE USING (auth.uid() = user_id);
-
-CREATE POLICY "Users can delete own journal entries" ON public.journal_entries
-    FOR DELETE USING (auth.uid() = user_id);
-
--- Emotion logs policies
-CREATE POLICY "Users can view own emotion logs" ON public.emotions_log
-    FOR SELECT USING (auth.uid() = user_id);
-
-CREATE POLICY "Users can insert own emotion logs" ON public.emotions_log
-    FOR INSERT WITH CHECK (auth.uid() = user_id);
-
--- Vibe rooms policies
-CREATE POLICY "Users can view public rooms" ON public.vibe_rooms
-    FOR SELECT USING (is_private = FALSE);
-
-CREATE POLICY "Users can view private rooms they created" ON public.vibe_rooms
-    FOR SELECT USING (auth.uid() = creator_id);
-
-CREATE POLICY "Users can insert own rooms" ON public.vibe_rooms
-    FOR INSERT WITH CHECK (auth.uid() = creator_id);
-
--- Vibe room participants policies
-CREATE POLICY "Users can view room participants" ON public.vibe_room_participants
-    FOR SELECT USING (true);
-
-CREATE POLICY "Users can join rooms" ON public.vibe_room_participants
-    FOR INSERT WITH CHECK (auth.uid() = user_id);
-
--- Chat messages policies
-CREATE POLICY "Users can view room messages" ON public.chat_messages
-    FOR SELECT USING (true);
-
-CREATE POLICY "Users can send messages" ON public.chat_messages
-    FOR INSERT WITH CHECK (auth.uid() = user_id);
-
--- Threshold warnings policies
-CREATE POLICY "Users can view own warnings" ON public.threshold_warnings
-    FOR SELECT USING (auth.uid() = user_id);
-
-CREATE POLICY "Users can insert own warnings" ON public.threshold_warnings
-    FOR INSERT WITH CHECK (auth.uid() = user_id);
-
-CREATE POLICY "Users can update own warnings" ON public.threshold_warnings
-    FOR UPDATE USING (auth.uid() = user_id);
-
--- Functions and triggers
-CREATE OR REPLACE FUNCTION public.handle_new_user()
-RETURNS TRIGGER AS $$
-BEGIN
-    INSERT INTO public.users (id, email, name)
-    VALUES (NEW.id, NEW.email, COALESCE(NEW.raw_user_meta_data->>'name', 'User'));
-    RETURN NEW;
-END;
-$$ LANGUAGE plpgsql SECURITY DEFINER;
-
-CREATE TRIGGER on_auth_user_created
-    AFTER INSERT ON auth.users
-    FOR EACH ROW EXECUTE FUNCTION public.handle_new_user();
+### 4. Run the Development Server
 ```
 
 ### 4. Run the Development Server
@@ -240,7 +95,7 @@ emolinkdn/
 │   ├── vibe-rooms/       # Social features
 │   └── threshold/        # Warning system
 ├── lib/                  # Utility functions
-│   ├── supabase.ts       # Supabase client & helpers
+│   ├── firebase.ts       # Firebase client & helpers
 │   └── ai.ts            # AI integration
 ├── store/               # Zustand state management
 ├── types/               # TypeScript definitions

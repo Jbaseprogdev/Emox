@@ -5,6 +5,7 @@ import { useForm } from 'react-hook-form'
 import { motion } from 'framer-motion'
 import { Mail, Lock, Eye, EyeOff, LogIn } from 'lucide-react'
 import { useAuthStore } from '@/store/auth-store'
+import { DemoUsers } from './demo-users'
 import toast from 'react-hot-toast'
 
 interface SignInFormData {
@@ -18,11 +19,13 @@ interface SignInFormProps {
 
 export function SignInForm({ onModeChange }: SignInFormProps) {
   const [showPassword, setShowPassword] = useState(false)
+  const [showDemoUsers, setShowDemoUsers] = useState(true)
   const { signIn, loading } = useAuthStore()
   
   const {
     register,
     handleSubmit,
+    setValue,
     formState: { errors },
   } = useForm<SignInFormData>()
 
@@ -36,6 +39,12 @@ export function SignInForm({ onModeChange }: SignInFormProps) {
     }
   }
 
+  const handleDemoUserSelect = (email: string, password: string) => {
+    setValue('email', email)
+    setValue('password', password)
+    setShowDemoUsers(false)
+  }
+
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -43,6 +52,11 @@ export function SignInForm({ onModeChange }: SignInFormProps) {
       exit={{ opacity: 0 }}
       className="space-y-6"
     >
+      {/* Demo Users Section */}
+      {showDemoUsers && (
+        <DemoUsers onUserSelect={handleDemoUserSelect} />
+      )}
+
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
         {/* Email Field */}
         <div>
@@ -104,7 +118,14 @@ export function SignInForm({ onModeChange }: SignInFormProps) {
         </div>
 
         {/* Forgot Password Link */}
-        <div className="flex items-center justify-end">
+        <div className="flex items-center justify-between">
+          <button
+            type="button"
+            onClick={() => setShowDemoUsers(!showDemoUsers)}
+            className="text-sm text-primary-600 hover:text-primary-700 dark:text-primary-400 dark:hover:text-primary-300 transition-colors duration-200"
+          >
+            {showDemoUsers ? 'Hide Demo Users' : 'Try Demo Users'}
+          </button>
           <button
             type="button"
             onClick={() => onModeChange('forgot')}

@@ -15,7 +15,7 @@ import {
   Globe
 } from 'lucide-react'
 import { useAuthStore } from '@/store/auth-store'
-import { getVibeRooms, createVibeRoom, joinVibeRoom, getChatMessages, sendMessage } from '@/lib/supabase'
+import { getVibeRooms, createVibeRoom, joinVibeRoom, getChatMessages, sendMessage } from '@/lib/firebase'
 import { VibeRoom, ChatMessage, EmotionType } from '@/types'
 import { format } from 'date-fns'
 import toast from 'react-hot-toast'
@@ -85,7 +85,10 @@ export function VibeRooms() {
       })
 
       if (newRoom) {
-        setRooms(prev => [newRoom, ...prev])
+        setRooms(prev => [{
+          ...newRoom,
+          created_at: new Date().toISOString()
+        }, ...prev])
         setShowCreateRoom(false)
         setSelectedEmotion(null)
         setIsPrivate(false)

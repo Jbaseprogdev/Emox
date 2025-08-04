@@ -4,7 +4,7 @@ export interface User {
   name: string
   avatar?: string
   created_at: string
-  updated_at: string
+  updated_at?: string
 }
 
 export interface JournalEntry {
@@ -14,7 +14,7 @@ export interface JournalEntry {
   summary?: string
   mood_tag: EmotionType
   created_at: string
-  updated_at: string
+  updated_at?: string
 }
 
 export interface EmotionLog {
@@ -31,7 +31,7 @@ export interface VibeRoom {
   emotion_tag: EmotionType
   is_private: boolean
   created_at: string
-  updated_at: string
+  updated_at?: string
   participants?: VibeRoomParticipant[]
 }
 

@@ -16,7 +16,7 @@ import {
 } from 'lucide-react'
 import { useAuthStore } from '@/store/auth-store'
 import { useAppStore } from '@/store/app-store'
-import { logEmotion, createThresholdWarning } from '@/lib/supabase'
+import { logEmotion, createThresholdWarning } from '@/lib/firebase'
 import { shouldTriggerThresholdWarning } from '@/lib/ai'
 import { EmotionType } from '@/types'
 import toast from 'react-hot-toast'

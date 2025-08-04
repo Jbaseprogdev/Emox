@@ -13,7 +13,7 @@ import {
   Heart
 } from 'lucide-react'
 import { useAuthStore } from '@/store/auth-store'
-import { createJournalEntry, getJournalEntries } from '@/lib/supabase'
+import { createJournalEntry, getJournalEntries } from '@/lib/firebase'
 import { analyzeJournalEntry, generateDailyPrompt } from '@/lib/ai'
 import { JournalEntry, EmotionType } from '@/types'
 import { format } from 'date-fns'

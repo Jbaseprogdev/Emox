@@ -14,16 +14,23 @@ import {
 } from 'lucide-react'
 import { User as UserType } from '@/types'
 
+type DashboardTab = 'home' | 'emotions' | 'journal' | 'vibe-rooms'
+
 interface SidebarProps {
   isOpen: boolean
   onClose: () => void
-  activeTab: string
-  onTabChange: (tab: string) => void
+  activeTab: DashboardTab
+  onTabChange: (tab: DashboardTab) => void
   user: UserType
   onSignOut: () => void
 }
 
-const navigationItems = [
+const navigationItems: Array<{
+  id: DashboardTab
+  label: string
+  icon: any
+  description: string
+}> = [
   {
     id: 'home',
     label: 'Dashboard',
@@ -89,8 +96,8 @@ function SidebarContent({
   onSignOut, 
   onClose 
 }: {
-  activeTab: string
-  onTabChange: (tab: string) => void
+  activeTab: DashboardTab
+  onTabChange: (tab: DashboardTab) => void
   user: UserType
   onSignOut: () => void
   onClose?: () => void
