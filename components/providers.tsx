@@ -15,7 +15,7 @@ export function Providers({ children }: ProvidersProps) {
   useEffect(() => {
     // Initialize authentication
     if (!initialized) {
-      initialize()
+      initialize().catch(console.error)
     }
 
     // Initialize dark mode from system preference

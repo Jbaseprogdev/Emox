@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { useAuthStore } from '@/store/auth-store'
 import { LoadingScreen } from '@/components/loading-screen'
@@ -10,6 +10,7 @@ import { Dashboard } from '@/components/dashboard/dashboard'
 export default function HomePage() {
   const { user, loading, initialized } = useAuthStore()
   const router = useRouter()
+  const [showAuth, setShowAuth] = useState(false)
 
   useEffect(() => {
     // Handle password reset redirect
@@ -22,6 +23,26 @@ export default function HomePage() {
       router.replace('/dashboard')
     }
   }, [router])
+
+  // Force auth page after timeout
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (!initialized || loading) {
+        console.log('Timeout reached - showing auth page')
+        setShowAuth(true)
+      }
+    }, 2000) // 2 second timeout
+
+    return () => clearTimeout(timer)
+  }, [initialized, loading])
+
+  // Debug logging
+  console.log('App state:', { user, loading, initialized, showAuth })
+  
+  // Show auth page if timeout reached or not authenticated
+  if (showAuth || (!initialized && !loading)) {
+    return <AuthPage />
+  }
 
   // Show loading screen while initializing
   if (!initialized || loading) {

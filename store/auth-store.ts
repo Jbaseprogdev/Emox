@@ -32,6 +32,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       const isDemoMode = !process.env.NEXT_PUBLIC_FIREBASE_API_KEY || process.env.NEXT_PUBLIC_FIREBASE_API_KEY === 'your_firebase_api_key'
       
       if (isDemoMode) {
+        console.log('Demo mode detected, skipping Firebase initialization')
         set({ user: null, loading: false, initialized: true })
         return
       }
