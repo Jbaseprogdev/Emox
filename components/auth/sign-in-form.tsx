@@ -47,9 +47,9 @@ export function SignInForm({ onModeChange }: SignInFormProps) {
 
   return (
     <motion.div
-      initial={{ opacity: 0 }}
+      initial={{ opacity: 1 }}
       animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
+      exit={{ opacity: 1 }}
       className="space-y-6"
     >
       {/* Demo Users Section */}

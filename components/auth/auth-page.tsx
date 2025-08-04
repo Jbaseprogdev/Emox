@@ -51,7 +51,7 @@ export function AuthPage() {
       <div className="relative z-10 w-full max-w-md">
         {/* Header */}
         <motion.div
-          initial={{ opacity: 0, y: -20 }}
+          initial={{ opacity: 1, y: 0 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
           className="text-center mb-8"
@@ -81,9 +81,9 @@ export function AuthPage() {
         {/* Auth Form */}
         <motion.div
           key={mode}
-          initial={{ opacity: 0, x: 20 }}
+          initial={{ opacity: 1, x: 0 }}
           animate={{ opacity: 1, x: 0 }}
-          exit={{ opacity: 0, x: -20 }}
+          exit={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.3 }}
           className="card p-8 shadow-2xl"
         >
@@ -94,7 +94,7 @@ export function AuthPage() {
 
         {/* Footer */}
         <motion.div
-          initial={{ opacity: 0 }}
+          initial={{ opacity: 1 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.8, duration: 0.6 }}
           className="text-center mt-6 text-sm text-gray-500 dark:text-gray-400"

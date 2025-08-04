@@ -71,7 +71,7 @@ export function DemoUsers({ onUserSelect }: DemoUsersProps) {
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
+      initial={{ opacity: 1, y: 0 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 0.2 }}
       className="space-y-4"
@@ -91,7 +91,7 @@ export function DemoUsers({ onUserSelect }: DemoUsersProps) {
         {demoUsers.map((user) => (
           <motion.div
             key={user.id}
-            initial={{ opacity: 0, scale: 0.9 }}
+            initial={{ opacity: 1, scale: 1 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: 0.1 * demoUsers.indexOf(user) }}
             className="relative p-3 border border-primary-200 dark:border-primary-700 rounded-lg hover:border-primary-300 dark:hover:border-primary-600 transition-colors duration-200 cursor-pointer group"
