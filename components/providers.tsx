@@ -13,10 +13,11 @@ export function Providers({ children }: ProvidersProps) {
   const { setDarkMode } = useAppStore()
 
   useEffect(() => {
-    // Initialize authentication
-    if (!initialized) {
-      initialize().catch(console.error)
-    }
+    // Initialize authentication immediately
+    console.log('Providers: Initializing auth store...')
+    initialize().catch((error) => {
+      console.error('Auth initialization failed:', error)
+    })
 
     // Initialize dark mode from system preference
     const isDark = window.matchMedia('(prefers-color-scheme: dark)').matches
@@ -30,7 +31,7 @@ export function Providers({ children }: ProvidersProps) {
 
     mediaQuery.addEventListener('change', handleChange)
     return () => mediaQuery.removeEventListener('change', handleChange)
-  }, [initialize, initialized, setDarkMode])
+  }, [initialize, setDarkMode]) // Removed initialized from dependencies
 
   return <>{children}</>
 } 

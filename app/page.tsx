@@ -31,7 +31,7 @@ export default function HomePage() {
         console.log('Timeout reached - showing auth page')
         setShowAuth(true)
       }
-    }, 2000) // 2 second timeout
+    }, 1000) // Reduced to 1 second timeout
 
     return () => clearTimeout(timer)
   }, [initialized, loading])
@@ -39,13 +39,18 @@ export default function HomePage() {
   // Debug logging
   console.log('App state:', { user, loading, initialized, showAuth })
   
-  // Show auth page if timeout reached or not authenticated
-  if (showAuth || (!initialized && !loading)) {
+  // In demo mode, always show auth page if not authenticated
+  const isDemoMode = !process.env.NEXT_PUBLIC_FIREBASE_API_KEY || process.env.NEXT_PUBLIC_FIREBASE_API_KEY === 'your_firebase_api_key'
+  
+  // Show auth page if timeout reached, not authenticated, or in demo mode
+  if (showAuth || (!initialized && !loading) || (isDemoMode && !user)) {
+    console.log('Showing auth page')
     return <AuthPage />
   }
 
   // Show loading screen while initializing
   if (!initialized || loading) {
+    console.log('Showing loading screen')
     return <LoadingScreen />
   }
 
