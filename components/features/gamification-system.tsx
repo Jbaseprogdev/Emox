@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { 
   X, Trophy, Star, Heart, Brain, BookOpen, MessageCircle, 
   Camera, Zap, Shield, TreePine, Music, Sun, Moon, 
-  Target, TrendingUp, Award, Gift, Fire, Sparkles
+  Target, TrendingUp, Award, Gift, Flame, Sparkles
 } from 'lucide-react'
 import toast from 'react-hot-toast'
 
@@ -418,12 +418,12 @@ export function GamificationSystem({ onClose, currentUser, onAchievementUnlocked
                     <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
                       Level {userProgress.level}
                     </h3>
-                    <div className="flex items-center space-x-2">
-                      <Fire className="w-5 h-5 text-orange-500" />
-                      <span className="text-sm font-medium text-gray-600 dark:text-gray-400">
-                        {userProgress.totalPoints} Total Points
-                      </span>
-                    </div>
+                                      <div className="flex items-center space-x-2">
+                    <Flame className="w-5 h-5 text-orange-500" />
+                    <span className="text-sm font-medium text-gray-600 dark:text-gray-400">
+                      {userProgress.totalPoints} Total Points
+                    </span>
+                  </div>
                   </div>
                   
                   <div className="space-y-2">

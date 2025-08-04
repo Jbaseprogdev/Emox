@@ -7,7 +7,7 @@ import { Heart, Sparkles, LogOut, User, BarChart3, BookOpen, MessageCircle, Came
 import toast from 'react-hot-toast'
 import { EmotionDetection } from '@/components/features/emotion-detection'
 import { AIJournal } from '@/components/features/ai-journal'
-import { VibeRooms } from '@/components/features/vibe-rooms'
+import { VibeRoomsEnhanced } from '@/components/features/vibe-rooms-enhanced'
 import { EmotionThreshold } from '@/components/features/emotion-threshold'
 import { AnalyticsDashboard } from '@/components/features/analytics-dashboard'
 import { AICoachEnhanced } from '@/components/features/ai-coach-enhanced'
@@ -348,9 +348,9 @@ export default function DashboardPage() {
             )}
 
             {showVibeRooms && (
-              <VibeRooms
+              <VibeRoomsEnhanced
                 onClose={() => setShowVibeRooms(false)}
-                currentUser={user?.name || 'Demo User'}
+                currentUser={user}
               />
             )}
 
