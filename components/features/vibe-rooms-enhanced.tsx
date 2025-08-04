@@ -9,6 +9,8 @@ import {
   CheckCircle, XCircle, Clock, Award, Zap, Sparkles
 } from 'lucide-react'
 import toast from 'react-hot-toast'
+import { JoinRequestSystem } from './join-request-system'
+import { EnhancedRoomCreation } from './enhanced-room-creation'
 
 interface VibeRoomProps {
   onClose: () => void
@@ -633,57 +635,33 @@ export function VibeRoomsEnhanced({ onClose, currentUser }: VibeRoomProps) {
           )}
         </div>
 
-        {/* Join Request Modal */}
+        {/* Enhanced Join Request System */}
         <AnimatePresence>
           {showJoinRequest && selectedRoom && (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="fixed inset-0 z-60 flex items-center justify-center bg-black/50 backdrop-blur-sm"
-            >
-              <motion.div
-                initial={{ scale: 0.9, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                exit={{ scale: 0.9, opacity: 0 }}
-                className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-2xl max-w-md mx-4"
-              >
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-                  Request to Join {selectedRoom.name}
-                </h3>
-                
-                <div className="space-y-4">
-                  <div className="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-3">
-                    <p className="text-sm text-blue-800 dark:text-blue-200">
-                      This room requires approval. Please provide a reason for joining.
-                    </p>
-                  </div>
-                  
-                  <textarea
-                    value={joinRequestReason}
-                    onChange={(e) => setJoinRequestReason(e.target.value)}
-                    placeholder="Why do you want to join this room?"
-                    className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent dark:bg-gray-700 dark:text-white resize-none"
-                    rows={3}
-                  />
-                  
-                  <div className="flex items-center justify-between">
-                    <button
-                      onClick={() => setShowJoinRequest(false)}
-                      className="px-4 py-2 text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 transition-colors"
-                    >
-                      Cancel
-                    </button>
-                    <button
-                      onClick={submitJoinRequest}
-                      className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors"
-                    >
-                      Submit Request
-                    </button>
-                  </div>
-                </div>
-              </motion.div>
-            </motion.div>
+            <JoinRequestSystem
+              room={selectedRoom}
+              currentUser={currentUser}
+              onClose={() => setShowJoinRequest(false)}
+              onJoinSuccess={() => {
+                setShowJoinRequest(false)
+                setSelectedRoom(null)
+                toast.success(`Welcome to ${selectedRoom.name}!`)
+              }}
+            />
+          )}
+        </AnimatePresence>
+
+        {/* Enhanced Room Creation */}
+        <AnimatePresence>
+          {showCreateRoom && (
+            <EnhancedRoomCreation
+              onClose={() => setShowCreateRoom(false)}
+              onRoomCreated={(newRoom) => {
+                setShowCreateRoom(false)
+                toast.success(`Room "${newRoom.name}" created successfully!`)
+              }}
+              currentUser={currentUser}
+            />
           )}
         </AnimatePresence>
       </motion.div>
