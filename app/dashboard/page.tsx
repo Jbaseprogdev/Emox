@@ -10,6 +10,7 @@ import { AIJournal } from '@/components/features/ai-journal'
 import { VibeRoomsEnhanced } from '@/components/features/vibe-rooms-enhanced'
 import { EmotionThreshold } from '@/components/features/emotion-threshold'
 import { AnalyticsDashboard } from '@/components/features/analytics-dashboard'
+import { EmotionalWellnessDashboard } from '@/components/features/emotional-wellness-dashboard'
 import { AICoachEnhanced } from '@/components/features/ai-coach-enhanced'
 import { GamificationSystem } from '@/components/features/gamification-system'
 import { MobileResponsiveLayout } from '@/components/features/mobile-responsive-layout'
@@ -30,6 +31,7 @@ export default function DashboardPage() {
   const [showAIJournal, setShowAIJournal] = useState(false)
   const [showVibeRooms, setShowVibeRooms] = useState(false)
   const [showAnalytics, setShowAnalytics] = useState(false)
+  const [showEmotionalWellness, setShowEmotionalWellness] = useState(false)
   const [showThresholdWarning, setShowThresholdWarning] = useState(false)
   const [showAICoach, setShowAICoach] = useState(false)
   const [showGamification, setShowGamification] = useState(false)
@@ -261,6 +263,27 @@ export default function DashboardPage() {
               </button>
             </motion.div>
 
+            {/* Emotional Wellness Dashboard */}
+            <motion.div
+              initial={{ opacity: 1, scale: 1 }}
+              animate={{ opacity: 1, scale: 1 }}
+              className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 border border-gray-200 dark:border-gray-700 hover:shadow-xl transition-shadow duration-300 cursor-pointer"
+              onClick={() => setShowEmotionalWellness(true)}
+            >
+              <div className="flex items-center space-x-3 mb-4">
+                <div className="w-10 h-10 bg-gradient-to-br from-green-100 to-emerald-100 dark:from-green-900/20 dark:to-emerald-900/20 rounded-lg flex items-center justify-center">
+                  <Brain className="w-5 h-5 text-green-600 dark:text-green-400" />
+                </div>
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Emotional Wellness Insights</h3>
+              </div>
+              <p className="text-gray-600 dark:text-gray-400 mb-4">
+                Comprehensive emotional analytics with smart insights, achievements, and progress tracking.
+              </p>
+              <button className="w-full bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white font-medium py-2 px-4 rounded-lg transition-all duration-200">
+                View Insights
+              </button>
+            </motion.div>
+
             {/* AI Coach */}
             <motion.div
               initial={{ opacity: 1, scale: 1 }}
@@ -357,6 +380,13 @@ export default function DashboardPage() {
             {showAnalytics && (
               <AnalyticsDashboard
                 onClose={() => setShowAnalytics(false)}
+              />
+            )}
+
+            {showEmotionalWellness && (
+              <EmotionalWellnessDashboard
+                onClose={() => setShowEmotionalWellness(false)}
+                currentUser={user}
               />
             )}
 
