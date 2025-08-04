@@ -30,6 +30,25 @@ export function SignInForm({ onModeChange }: SignInFormProps) {
   } = useForm<SignInFormData>()
 
   const onSubmit = async (data: SignInFormData) => {
+    // Demo user authentication
+    if (data.email.includes('@demo.com') && data.password === 'demo123') {
+      toast.success('Welcome back!')
+      // Store demo user in localStorage for session management
+      const demoUser = {
+        id: 'demo-user',
+        email: data.email,
+        name: data.email.split('@')[0].replace('.', ' '),
+        avatar: '',
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString()
+      }
+      localStorage.setItem('demoUser', JSON.stringify(demoUser))
+      // Redirect to dashboard or reload page
+      window.location.href = '/dashboard'
+      return
+    }
+    
+    // Regular authentication (for future Firebase integration)
     const result = await signIn(data.email, data.password)
     
     if (result.success) {
