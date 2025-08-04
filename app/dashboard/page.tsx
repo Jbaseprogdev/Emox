@@ -2,9 +2,14 @@
 
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { motion } from 'framer-motion'
-import { Heart, Sparkles, LogOut, User, BarChart3, BookOpen, MessageCircle } from 'lucide-react'
+import { motion, AnimatePresence } from 'framer-motion'
+import { Heart, Sparkles, LogOut, User, BarChart3, BookOpen, MessageCircle, Camera, AlertTriangle, X } from 'lucide-react'
 import toast from 'react-hot-toast'
+import { EmotionDetection } from '@/components/features/emotion-detection'
+import { AIJournal } from '@/components/features/ai-journal'
+import { VibeRooms } from '@/components/features/vibe-rooms'
+import { EmotionThreshold } from '@/components/features/emotion-threshold'
+import { AnalyticsDashboard } from '@/components/features/analytics-dashboard'
 
 interface DemoUser {
   id: string
@@ -18,6 +23,13 @@ interface DemoUser {
 export default function DashboardPage() {
   const [user, setUser] = useState<DemoUser | null>(null)
   const [loading, setLoading] = useState(true)
+  const [showEmotionDetection, setShowEmotionDetection] = useState(false)
+  const [showAIJournal, setShowAIJournal] = useState(false)
+  const [showVibeRooms, setShowVibeRooms] = useState(false)
+  const [showAnalytics, setShowAnalytics] = useState(false)
+  const [showThresholdWarning, setShowThresholdWarning] = useState(false)
+  const [recentEmotions, setRecentEmotions] = useState<any[]>([])
+  const [journalEntries, setJournalEntries] = useState<any[]>([])
   const router = useRouter()
 
   useEffect(() => {
@@ -36,6 +48,24 @@ export default function DashboardPage() {
     localStorage.removeItem('demoUser')
     toast.success('Signed out successfully')
     router.push('/')
+  }
+
+  const handleEmotionDetected = (emotion: any) => {
+    setRecentEmotions(prev => [emotion, ...prev.slice(0, 4)])
+    
+    // Check for threshold warning
+    if (emotion.intensity >= 7) {
+      setShowThresholdWarning(true)
+    }
+  }
+
+  const handleJournalEntryCreated = (entry: any) => {
+    setJournalEntries(prev => [entry, ...prev.slice(0, 4)])
+  }
+
+  const handleThresholdResolve = () => {
+    setShowThresholdWarning(false)
+    toast.success('Threshold warning resolved')
   }
 
   if (loading) {
@@ -114,15 +144,16 @@ export default function DashboardPage() {
             initial={{ opacity: 1, scale: 1 }}
             animate={{ opacity: 1, scale: 1 }}
             className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 border border-gray-200 dark:border-gray-700 hover:shadow-xl transition-shadow duration-300 cursor-pointer"
+            onClick={() => setShowEmotionDetection(true)}
           >
             <div className="flex items-center space-x-3 mb-4">
               <div className="w-10 h-10 bg-primary-100 dark:bg-primary-900 rounded-lg flex items-center justify-center">
-                <BarChart3 className="w-5 h-5 text-primary-600 dark:text-primary-400" />
+                <Camera className="w-5 h-5 text-primary-600 dark:text-primary-400" />
               </div>
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Mood Check-in</h3>
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Emotion Detection</h3>
             </div>
             <p className="text-gray-600 dark:text-gray-400 mb-4">
-              How are you feeling right now? Track your emotions and get insights.
+              How are you feeling right now? Track your emotions with manual selection or facial detection.
             </p>
             <button className="w-full bg-primary-600 hover:bg-primary-700 text-white font-medium py-2 px-4 rounded-lg transition-colors duration-200">
               Check In Now
@@ -133,6 +164,7 @@ export default function DashboardPage() {
             initial={{ opacity: 1, scale: 1 }}
             animate={{ opacity: 1, scale: 1 }}
             className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 border border-gray-200 dark:border-gray-700 hover:shadow-xl transition-shadow duration-300 cursor-pointer"
+            onClick={() => setShowAIJournal(true)}
           >
             <div className="flex items-center space-x-3 mb-4">
               <div className="w-10 h-10 bg-wellness-100 dark:bg-wellness-900 rounded-lg flex items-center justify-center">
@@ -152,6 +184,7 @@ export default function DashboardPage() {
             initial={{ opacity: 1, scale: 1 }}
             animate={{ opacity: 1, scale: 1 }}
             className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 border border-gray-200 dark:border-gray-700 hover:shadow-xl transition-shadow duration-300 cursor-pointer"
+            onClick={() => setShowVibeRooms(true)}
           >
             <div className="flex items-center space-x-3 mb-4">
               <div className="w-10 h-10 bg-purple-100 dark:bg-purple-900 rounded-lg flex items-center justify-center">
@@ -168,6 +201,62 @@ export default function DashboardPage() {
           </motion.div>
         </div>
 
+        {/* Additional Features */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
+          {/* Analytics Dashboard */}
+          <motion.div
+            initial={{ opacity: 1, scale: 1 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 border border-gray-200 dark:border-gray-700 hover:shadow-xl transition-shadow duration-300 cursor-pointer"
+            onClick={() => setShowAnalytics(true)}
+          >
+            <div className="flex items-center space-x-3 mb-4">
+              <div className="w-10 h-10 bg-indigo-100 dark:bg-indigo-900 rounded-lg flex items-center justify-center">
+                <BarChart3 className="w-5 h-5 text-indigo-600 dark:text-indigo-400" />
+              </div>
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Analytics Dashboard</h3>
+            </div>
+            <p className="text-gray-600 dark:text-gray-400 mb-4">
+              View detailed insights, mood trends, and track your emotional wellness progress.
+            </p>
+            <button className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2 px-4 rounded-lg transition-colors duration-200">
+              View Analytics
+            </button>
+          </motion.div>
+
+          {/* Recent Activity */}
+          <motion.div
+            initial={{ opacity: 1, scale: 1 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 border border-gray-200 dark:border-gray-700"
+          >
+            <div className="flex items-center space-x-3 mb-4">
+              <div className="w-10 h-10 bg-orange-100 dark:bg-orange-900 rounded-lg flex items-center justify-center">
+                <Activity className="w-5 h-5 text-orange-600 dark:text-orange-400" />
+              </div>
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Recent Activity</h3>
+            </div>
+            
+            <div className="space-y-3">
+              {recentEmotions.length > 0 ? (
+                recentEmotions.map((emotion, index) => (
+                  <div key={index} className="flex items-center space-x-3 p-2 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                    <div className="w-8 h-8 bg-primary-100 dark:bg-primary-900 rounded-full flex items-center justify-center">
+                      <Heart className="w-4 h-4 text-primary-600" />
+                    </div>
+                    <div className="flex-1">
+                      <p className="text-sm font-medium text-gray-900 dark:text-white">{emotion.name}</p>
+                      <p className="text-xs text-gray-500 dark:text-gray-400">Intensity: {emotion.intensity}/10</p>
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <p className="text-sm text-gray-500 dark:text-gray-400">No recent emotions tracked</p>
+              )}
+            </div>
+          </motion.div>
+        </div>
+
         {/* Demo Info */}
         <motion.div
           initial={{ opacity: 1 }}
@@ -180,6 +269,45 @@ export default function DashboardPage() {
             All features are simulated to show you how the real app would work.
           </p>
         </motion.div>
+
+        {/* Feature Modals */}
+        <AnimatePresence>
+          {showEmotionDetection && (
+            <EmotionDetection
+              onEmotionDetected={handleEmotionDetected}
+              onClose={() => setShowEmotionDetection(false)}
+            />
+          )}
+
+          {showAIJournal && (
+            <AIJournal
+              onEntryCreated={handleJournalEntryCreated}
+              onClose={() => setShowAIJournal(false)}
+            />
+          )}
+
+          {showVibeRooms && (
+            <VibeRooms
+              onClose={() => setShowVibeRooms(false)}
+              currentUser={user?.name || 'Demo User'}
+            />
+          )}
+
+          {showAnalytics && (
+            <AnalyticsDashboard
+              onClose={() => setShowAnalytics(false)}
+            />
+          )}
+
+          {showThresholdWarning && (
+            <EmotionThreshold
+              emotion="High Intensity"
+              intensity={8}
+              onClose={() => setShowThresholdWarning(false)}
+              onResolve={handleThresholdResolve}
+            />
+          )}
+        </AnimatePresence>
       </main>
     </div>
   )
