@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Heart, Sparkles, LogOut, User, BarChart3, BookOpen, MessageCircle, Camera, AlertTriangle, X } from 'lucide-react'
+import { Heart, Sparkles, LogOut, User, BarChart3, BookOpen, MessageCircle, Camera, AlertTriangle, X, Activity } from 'lucide-react'
 import toast from 'react-hot-toast'
 import { EmotionDetection } from '@/components/features/emotion-detection'
 import { AIJournal } from '@/components/features/ai-journal'

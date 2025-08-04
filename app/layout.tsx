@@ -3,6 +3,9 @@ import { Inter } from 'next/font/google'
 import './globals.css'
 import { Toaster } from 'react-hot-toast'
 import { Providers } from '@/components/providers'
+import { ErrorBoundary } from '@/lib/error-boundary'
+import { initializePerformanceMonitoring } from '@/lib/performance'
+import { enableDevTesting } from '@/lib/testing'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -35,31 +38,47 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body className={inter.className}>
         <Providers>
-          {children}
-          <Toaster
-            position="top-right"
-            toastOptions={{
-              duration: 4000,
-              style: {
-                background: 'var(--background-start-rgb)',
-                color: 'var(--foreground-rgb)',
-                border: '1px solid var(--border-rgb)',
-              },
-              success: {
-                iconTheme: {
-                  primary: '#10b981',
-                  secondary: '#ffffff',
+          <ErrorBoundary>
+            {children}
+            <Toaster
+              position="top-right"
+              toastOptions={{
+                duration: 4000,
+                style: {
+                  background: 'var(--background-start-rgb)',
+                  color: 'var(--foreground-rgb)',
+                  border: '1px solid var(--border-rgb)',
                 },
-              },
-              error: {
-                iconTheme: {
-                  primary: '#ef4444',
-                  secondary: '#ffffff',
+                success: {
+                  iconTheme: {
+                    primary: '#10b981',
+                    secondary: '#ffffff',
+                  },
                 },
-              },
-            }}
-          />
+                error: {
+                  iconTheme: {
+                    primary: '#ef4444',
+                    secondary: '#ffffff',
+                  },
+                },
+              }}
+            />
+          </ErrorBoundary>
         </Providers>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              if (typeof window !== 'undefined') {
+                try {
+                  ${initializePerformanceMonitoring.toString()}();
+                  ${enableDevTesting.toString()}();
+                } catch (error) {
+                  console.warn('Performance monitoring initialization failed:', error);
+                }
+              }
+            `,
+          }}
+        />
       </body>
     </html>
   )
