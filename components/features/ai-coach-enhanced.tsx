@@ -199,7 +199,7 @@ export function AICoachEnhanced({ onClose, currentUser, currentMood, onMoodUpdat
       }, 3000)
     } else {
       setIsRecording(false)
-      toast.info('Voice recording stopped')
+      toast.success('Voice recording stopped')
     }
   }
 

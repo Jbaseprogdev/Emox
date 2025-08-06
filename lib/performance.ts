@@ -54,10 +54,11 @@ export class PerformanceMonitor {
     const fidObserver = new PerformanceObserver((list) => {
       const entries = list.getEntries()
       entries.forEach((entry) => {
-        this.metrics.set('fid', entry.processingStart - entry.startTime)
+        const fid = (entry as any).processingStart - entry.startTime
+        this.metrics.set('fid', fid)
         
-        if (entry.processingStart - entry.startTime > 100) {
-          console.warn(`Poor FID detected: ${(entry.processingStart - entry.startTime).toFixed(2)}ms`)
+        if (fid > 100) {
+          console.warn(`Poor FID detected: ${fid.toFixed(2)}ms`)
         }
       })
     })
@@ -136,7 +137,7 @@ export function analyzeBundleSize(): void {
     const entries = list.getEntries()
     entries.forEach((entry) => {
       if (entry.name.includes('chunk') || entry.name.includes('bundle')) {
-        const size = entry.transferSize || entry.encodedBodySize || 0
+        const size = (entry as any).transferSize || (entry as any).encodedBodySize || 0
         const sizeKB = size / 1024
         
         if (sizeKB > 500) {
